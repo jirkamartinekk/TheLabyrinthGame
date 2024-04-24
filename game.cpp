@@ -14,6 +14,7 @@ int poziceX = 0;
 int poziceY = 0;
 int zivoty = 3;
 int menuActive;
+int mapSettings = 1;
 char znak = 'm';
 char hraciPole[MAX][MAX];
 unsigned long cas, casAktualni, casSpusteniHry;
@@ -181,28 +182,53 @@ int nactiHraciPoleZeSouboru()
 
     int sloupec, radek, znak;
 
-    FILE *soubor;
-    if (soubor = fopen("maps\\01.txt", "r"))
-    {
-
-        for (radek = 0; radek < MAX; radek++)
+    FILE* soubor;
+    if (mapSettings == 1) {
+        if (soubor = fopen("maps\\01.txt", "r"))
         {
 
-            for (sloupec = 0; sloupec < MAX; sloupec++)
+            for (radek = 0; radek < MAX; radek++)
             {
 
-                hraciPole[radek][sloupec] = getc(soubor);
+                for (sloupec = 0; sloupec < MAX; sloupec++)
+                {
+
+                    hraciPole[radek][sloupec] = getc(soubor);
+                }
+                while ((znak = getc(soubor)) != '\n' && znak != EOF)
+                    ;
             }
-            while ((znak = getc(soubor)) != '\n' && znak != EOF)
-                ;
+
+            fclose(soubor);
+
+            return 1;
         }
-
-        fclose(soubor);
-
-        return 1;
+        else
+            printf("Nastala chyba pri nacitani souboru!\n");
     }
-    else
-        printf("Nastala chyba pri nacitani souboru!\n");
+    else {
+        if (soubor = fopen("maps\\02.txt", "r"))
+        {
+
+            for (radek = 0; radek < MAX; radek++)
+            {
+
+                for (sloupec = 0; sloupec < MAX; sloupec++)
+                {
+
+                    hraciPole[radek][sloupec] = getc(soubor);
+                }
+                while ((znak = getc(soubor)) != '\n' && znak != EOF)
+                    ;
+            }
+
+            fclose(soubor);
+
+            return 1;
+        }
+        else
+            printf("Nastala chyba pri nacitani souboru!\n");
+    }
 
     return 0;
 }
@@ -215,12 +241,12 @@ int main()
 
         setTextColor(37);
         std::cout << " _______ _             _____            _                      _             _____     \n"
-                     "|__   __| |           / ____|          | |                    (_)           / ____|    \n"
-                     "   | |  | |__   ___  | (___   __ _  ___| |__   _____   ___ __  _  ___ ___  | |  __  __ _ _ __ ___   ___ \n"
-                     "   | |  | '_ \\ / _ \\  \\___ \\ / _` |/ __| '_ \\ / _ \\ \\ / / '_ \\| |/ __/ _ \\ | | |_ |/ _` | '_ ` _ \\ / _ \\\n"
-                     "   | |  | | | |  __/  ____) | (_| | (__| | | | (_) \\ V /| | | | | (_|  __/ | |__| | (_| | | | | | |  __/\n"
-                     "   |_|  |_| |_|\\___| |_____/ \\__,_|\\___|_| |_|\\___/ \\_/ |_| |_|_|\\___\\___|  \\_____|\\__,_|_| |_| |_|\\___|\n";
-        printf("version: 4.1.0\n");
+            "|__   __| |           / ____|          | |                    (_)           / ____|    \n"
+            "   | |  | |__   ___  | (___   __ _  ___| |__   _____   ___ __  _  ___ ___  | |  __  __ _ _ __ ___   ___ \n"
+            "   | |  | '_ \\ / _ \\  \\___ \\ / _` |/ __| '_ \\ / _ \\ \\ / / '_ \\| |/ __/ _ \\ | | |_ |/ _` | '_ ` _ \\ / _ \\\n"
+            "   | |  | | | |  __/  ____) | (_| | (__| | | | (_) \\ V /| | | | | (_|  __/ | |__| | (_| | | | | | |  __/\n"
+            "   |_|  |_| |_|\\___| |_____/ \\__,_|\\___|_| |_|\\___/ \\_/ |_| |_|_|\\___\\___|  \\_____|\\__,_|_| |_| |_|\\___|\n";
+        printf("version: 4.2.0\n");
         printf("\n\n");
         printf("Pro spusteni hry stiskni klavesu");
         printf(" ");
@@ -376,19 +402,31 @@ int main()
         else if (menuActive == 3)
         {
             system("cls");
-            setTextColor(37);
-            printf("----------------------------------------------\n");
-            printf("NASTAVENI\n");
-            printf("----------------------------------------------\n");
-            printf("Dostupne mapy: A, B\n");
-            printf("Vyber mapu: ");
-            printf("\n\n");
-            printf("Pro prejiti zpet do hlavniho menu stiskni klavesu");
-            printf(" ");
-            setTextColor(36);
-            printf("B");
-            setTextColor(37);
-            printf("!\n");
+            do {
+                system("cls");
+
+                setTextColor(37);
+                printf("----------------------------------------------\n");
+                printf("NASTAVENI\n");
+                printf("----------------------------------------------\n");
+                printf("Vyber mapu: ");
+                printf("<%d>", mapSettings);
+                printf("\n");
+                printf("\n\n");
+                printf("Pro prejiti zpet do hlavniho menu stiskni 2x klavesu");
+                printf(" ");
+                setTextColor(36);
+                printf("B");
+                setTextColor(37);
+                printf("!\n");
+                znak = _getch();
+                if (znak == 77) {
+                    mapSettings = 2;
+                }
+                else if (znak == 75) {
+                    mapSettings = 1;
+                }
+            } while (znak != 'b' && znak != 'B');
 
             if (menuCheck())
             {
