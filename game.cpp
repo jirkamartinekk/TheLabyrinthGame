@@ -26,8 +26,9 @@ void vypisSachovnici(void) {
 
 	system("cls"); //systemovy prikaz clear screen
 
-	printf("Pouzij klavesy W,A,S,D pro pohyb:");
-	printf("\nStiskni klavesu Q pro ukonceni: ");
+	printf("Pouzij klavesy W,A,S,D,Q,E,Z,C pro pohyb:");
+	printf("\n");
+	printf("Stiskni klavesu L pro ukonceni:");
 	printf("\n");
 	printf("------------------------------");
 	printf("\nZivoty: %d", zivoty);
@@ -47,8 +48,6 @@ void vypisSachovnici(void) {
 			}
 			else if (sloupec == (MAX - 1) && radek == (MAX - 1))
 				printf("|#");
-			else if ()
-				printf("|%c", hraciPole[radek][sloupec]);
 			else {
 				printf("| ");
 			}
@@ -69,7 +68,7 @@ void vypisSachovnici(void) {
 
 int main()
 {
-	char znak = 'f';
+	char znak = 'm';
 
 	nactiHraciPole();
 	vypisSachovnici();
@@ -95,12 +94,29 @@ int main()
 			case 's': if (poziceY < (MAX - 1))poziceY++;
 						else zivoty--;
 				break;
+			case 'q': 
+				if (poziceX > 0 && poziceY > 0) poziceX--, poziceY--;
+						else zivoty--;
+				break;
+			case 'e':
+				if (poziceX < (MAX - 1) && poziceY > 0) poziceX++, poziceY--;
+						else zivoty--;
+				break;
+			case 'z':
+				if (poziceX > 0 && poziceY < (MAX - 1)) poziceX--, poziceY++;
+						else zivoty--;
+				break;
+			case 'c':
+				if (poziceX < (MAX - 1) && poziceY < (MAX - 1)) poziceX++, poziceY++;
+				else zivoty--;
+				break;
+
 			}
 
 			vypisSachovnici();
 		}
 
-	} while (znak != 'q' && !(poziceX == (MAX - 1) && (poziceY == MAX - 1)) && !zivoty == 0);
+	} while (znak != 'l' && !(poziceX == (MAX - 1) && (poziceY == MAX - 1)) && !zivoty == 0);
 	if (poziceX == (MAX - 1) && (poziceY == MAX - 1)) printf("Gratuluji, kavalire! Mas u me svacinu...");
 	else printf("Chcipl jsi na zivoty nebo jsi to leavnul, srabe!");
 
