@@ -7,6 +7,17 @@
 
 int poziceX = 0;
 int poziceY = 0;
+int zivoty = 3;
+char hraciPole [MAX][MAX];
+
+void nactiHraciPole() {
+	int sloupec, radek;
+	for (radek = 0; radek < MAX; radek++)
+		for (sloupec = 0; sloupec < MAX; sloupec++)
+			hraciPole[radek][sloupec] = ' ';
+	hraciPole[1][1] = '#';
+	return;
+}
 
 void vypisSachovnici(void) {
 
@@ -18,6 +29,10 @@ void vypisSachovnici(void) {
 	printf("Pouzij klavesy W,A,S,D pro pohyb:");
 	printf("\nStiskni klavesu Q pro ukonceni: ");
 	printf("\n");
+	printf("------------------------------");
+	printf("\nZivoty: %d", zivoty);
+	printf("\n");
+	printf("------------------------------\n");
 
 	for (radek = 0; radek < MAX; radek++) {
 		for (sloupec = 0; sloupec < MAX; sloupec++) {
@@ -30,6 +45,10 @@ void vypisSachovnici(void) {
 			if (sloupec == poziceX && radek == poziceY) {
 				printf("|X");
 			}
+			else if (sloupec == (MAX - 1) && radek == (MAX - 1))
+				printf("|#");
+			else if ()
+				printf("|%c", hraciPole[radek][sloupec]);
 			else {
 				printf("| ");
 			}
@@ -49,29 +68,41 @@ void vypisSachovnici(void) {
 
 
 int main()
-{	
-	char znak = 'f'; //musim zvolit random pismeno
+{
+	char znak = 'f';
 
+	nactiHraciPole();
 	vypisSachovnici();
 
 	do {
-		if (_kbhit() != 0) { //kontroluje, zda je zmacknuta klavesa
-			znak = _getch(); //vylepseny getchar; dokaze cist vstup z vice zarizeni
+		if (_kbhit() != 0) {
+			znak = _getch();
+			if (znak == 224) znak = _getch();
 			switch (znak) {
-			case 'a': if(poziceX > 0) poziceX--;
+			case 75:
+			case 'a': if (poziceX > 0) poziceX--;
+						else zivoty--;
 				break;
-			case 'd': if(poziceX < (MAX-1)) poziceX++;
+			case 77:
+			case 'd': if (poziceX < (MAX - 1)) poziceX++;
+						else zivoty--;
 				break;
-			case 'w': if(poziceY > 0) poziceY--;
+			case 72:
+			case 'w': if (poziceY > 0) poziceY--;
+						else zivoty--;
 				break;
-			case 's': if(poziceY < (MAX -1))poziceY++;
+			case 80:
+			case 's': if (poziceY < (MAX - 1))poziceY++;
+						else zivoty--;
 				break;
 			}
-			vypisSachovnici(); //na konci cyklu musim znovu vypsat sachovnici
+
+			vypisSachovnici();
 		}
 
-	} while (znak != 'q');
-
+	} while (znak != 'q' && !(poziceX == (MAX - 1) && (poziceY == MAX - 1)) && !zivoty == 0);
+	if (poziceX == (MAX - 1) && (poziceY == MAX - 1)) printf("Gratuluji, kavalire! Mas u me svacinu...");
+	else printf("Chcipl jsi na zivoty nebo jsi to leavnul, srabe!");
 
 	return 0;
 }
