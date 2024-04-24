@@ -1,8 +1,9 @@
-﻿#define _CRT_SECURE_NO_WARNINGS 1
+#define _CRT_SECURE_NO_WARNINGS 1
 #include <iostream>
 #include <windows.h>
 #include <string.h>
 #include <cstdio>
+#include <cstdlib>
 #include <conio.h>
 #include <time.h>
 
@@ -12,6 +13,8 @@
 int poziceX = 0;
 int poziceY = 0;
 int zivoty = 3;
+int menuActive;
+char znak = 'm';
 char hraciPole[MAX][MAX];
 unsigned long cas, casAktualni, casSpusteniHry;
 
@@ -29,37 +32,6 @@ void nactiHraciPole()
 	hraciPole[1][1] = '#';
 
 	return;
-}
-
-int nactiHraciPoleZeSouboru()
-{
-
-	int sloupec, radek, znak;
-
-	FILE *soubor;
-	if (soubor = fopen("maps\\01.txt", "r"))
-	{
-
-		for (radek = 0; radek < MAX; radek++)
-		{
-
-			for (sloupec = 0; sloupec < MAX; sloupec++)
-			{
-
-				hraciPole[radek][sloupec] = getc(soubor);
-			}
-			while ((znak = getc(soubor)) != '\n' && znak != EOF)
-				;
-		}
-
-		fclose(soubor);
-
-		return 1;
-	}
-	else
-		printf("Nastala chyba pri nacitani souboru!\n");
-
-	return 0;
 }
 
 void setTextColor(int colorCode)
@@ -174,105 +146,245 @@ void teleport()
 	return;
 }
 
-int main()
+bool menuCheck() {
+
+	znak = _getch();
+
+	if (znak == 's') {
+		menuActive = 1;
+	}
+	else if (znak == 'p') {
+		menuActive = 2;
+	}
+	else if (znak == 'n') {
+		menuActive = 3;
+	}
+	else if (znak == 'b') {
+		menuActive = 0;
+		return true;
+	}
+	else {
+		menuActive = 0;
+	}
+
+	return false;
+}
+
+int nactiHraciPoleZeSouboru()
 {
-	char znak = 'm';
 
-	if (!nactiHraciPoleZeSouboru())
+	int sloupec, radek, znak;
+
+	FILE* soubor;
+	if (soubor = fopen("maps\\01.txt", "r"))
 	{
-		printf("Soubor se nepodarilo otevrit!\n");
-		return 0;
-	}
 
-	casSpusteniHry = time(0);
-
-	vypisSachovnici();
-
-	do
-	{
-		if (_kbhit() != 0)
+		for (radek = 0; radek < MAX; radek++)
 		{
-			znak = _getch();
-			if (znak == 224)
-				znak = _getch();
-			switch (znak)
+
+			for (sloupec = 0; sloupec < MAX; sloupec++)
 			{
-			case 75:
-			case 'a':
-				if (poziceX > 0 && (hraciPole[poziceY][poziceX - 1] != 'X'))
-					poziceX--;
-				else
-					zivoty--;
-				break;
-			case 77:
-			case 'd':
-				if (poziceX < (MAX - 1) && (hraciPole[poziceY][poziceX + 1] != 'X'))
-					poziceX++;
-				else
-					zivoty--;
-				break;
-			case 72:
-			case 'w':
-				if (poziceY > 0 && (hraciPole[poziceY - 1][poziceX] != 'X'))
-					poziceY--;
-				else
-					zivoty--;
-				break;
-			case 80:
-			case 's':
-				if (poziceY < (MAX - 1) && (hraciPole[poziceY + 1][poziceX] != 'X'))
-					poziceY++;
-				else
-					zivoty--;
-				break;
 
+				hraciPole[radek][sloupec] = getc(soubor);
 			}
-
-			teleport();
-			vypisSachovnici();
+			while ((znak = getc(soubor)) != '\n' && znak != EOF)
+				;
 		}
 
-		casAktualni = time(0);
-		if ((casAktualni - cas) > 0)
-		{
-			vypisSachovnici();
-		}
+		fclose(soubor);
 
-	} while (znak != 27 && !(poziceX == (MAX - 1) && (poziceY == MAX - 1)) && !zivoty == 0 && (CASKONCE - (casAktualni - casSpusteniHry)));
-
-	// podminky pro stavové zobrazení koncové zprávy
-	if (poziceX == (MAX - 1) && (poziceY == MAX - 1))
-	{
-		setTextColor(33);
-		printf("----------------------------------------------\n");
-		printf("Gratuluji ti, kavalire! Mas u me svacinu!\n");
-		printf("----------------------------------------------\n");
-		setTextColor(37);
-	}
-	else if (znak == 27)
-	{
-		setTextColor(33);
-		printf("----------------------------------------------\n");
-		printf("Ukoncil jsi hru, srabe!\n");
-		printf("----------------------------------------------\n");
-		setTextColor(37);
-	}
-	else if ((casAktualni - casSpusteniHry) == CASKONCE)
-	{
-		setTextColor(33);
-		printf("----------------------------------------------\n");
-		printf("Vyprsel ti cas!\n");
-		printf("----------------------------------------------\n");
-		setTextColor(37);
+		return 1;
 	}
 	else
-	{
-		setTextColor(33);
-		printf("----------------------------------------------\n");
-		printf("Umrel jsi :(\n");
-		printf("----------------------------------------------\n");
+		printf("Nastala chyba pri nacitani souboru!\n");
+
+	return 0;
+}
+
+int main()
+{
+	do {
+		system("cls");
+
 		setTextColor(37);
-	}
+		std::cout << " _______ _             _____            _                      _             _____     \n"
+			"|__   __| |           / ____|          | |                    (_)           / ____|    \n"
+			"   | |  | |__   ___  | (___   __ _  ___| |__   _____   ___ __  _  ___ ___  | |  __  __ _ _ __ ___   ___ \n"
+			"   | |  | '_ \\ / _ \\  \\___ \\ / _` |/ __| '_ \\ / _ \\ \\ / / '_ \\| |/ __/ _ \\ | | |_ |/ _` | '_ ` _ \\ / _ \\\n"
+			"   | |  | | | |  __/  ____) | (_| | (__| | | | (_) \\ V /| | | | | (_|  __/ | |__| | (_| | | | | | |  __/\n"
+			"   |_|  |_| |_|\\___| |_____/ \\__,_|\\___|_| |_|\\___/ \\_/ |_| |_|_|\\___\\___|  \\_____|\\__,_|_| |_| |_|\\___|\n";
+		printf("version: 4.1.0\n");
+		printf("\n\n");
+		printf("Pro spusteni hry stiskni klavesu");
+		printf(" ");
+		setTextColor(36);
+		printf("S");
+		setTextColor(37);
+		printf("!\n");
+		printf("Pro prechod do nastaveni stiskni klavesu");
+		printf(" ");
+		setTextColor(36);
+		printf("N");
+		setTextColor(37);
+		printf("!\n");
+		printf("Pro prechod k pravidlum stiskni klavesu");
+		printf(" ");
+		setTextColor(36);
+		printf("P");
+		setTextColor(37);
+		printf("!\n");
+		printf("Pro ukonceni stiskni klavesu");
+		printf(" ");
+		setTextColor(36);
+		printf("ESC");
+		setTextColor(37);
+		printf("!\n");
+
+		menuCheck();
+
+		if (menuActive == 1) {
+			if (!nactiHraciPoleZeSouboru())
+			{
+				printf("Soubor se nepodarilo otevrit!\n");
+				return 0;
+			}
+
+			casSpusteniHry = time(0);
+
+			vypisSachovnici();
+
+			do
+			{
+				if (_kbhit() != 0)
+				{
+					znak = _getch();
+					if (znak == 224)
+						znak = _getch();
+					switch (znak)
+					{
+					case 75:
+					case 'a':
+						if (poziceX > 0 && (hraciPole[poziceY][poziceX - 1] != 'X'))
+							poziceX--;
+						else
+							zivoty--;
+						break;
+					case 77:
+					case 'd':
+						if (poziceX < (MAX - 1) && (hraciPole[poziceY][poziceX + 1] != 'X'))
+							poziceX++;
+						else
+							zivoty--;
+						break;
+					case 72:
+					case 'w':
+						if (poziceY > 0 && (hraciPole[poziceY - 1][poziceX] != 'X'))
+							poziceY--;
+						else
+							zivoty--;
+						break;
+					case 80:
+					case 's':
+						if (poziceY < (MAX - 1) && (hraciPole[poziceY + 1][poziceX] != 'X'))
+							poziceY++;
+						else
+							zivoty--;
+						break;
+
+					}
+
+					teleport();
+					vypisSachovnici();
+				}
+
+				casAktualni = time(0);
+				if ((casAktualni - cas) > 0)
+				{
+					vypisSachovnici();
+				}
+
+			} while (znak != 27 && !(poziceX == (MAX - 1) && (poziceY == MAX - 1)) && !zivoty == 0 && (CASKONCE - (casAktualni - casSpusteniHry)));
+
+			if (poziceX == (MAX - 1) && (poziceY == MAX - 1))
+			{
+				setTextColor(33);
+				printf("----------------------------------------------\n");
+				printf("Gratuluji ti, kavalire! Mas u me svacinu!\n");
+				printf("----------------------------------------------\n");
+				setTextColor(37);
+				exit(0);
+			}
+			else if (znak == 27)
+			{
+				setTextColor(33);
+				printf("----------------------------------------------\n");
+				printf("Ukoncil jsi hru, srabe!\n");
+				printf("----------------------------------------------\n");
+				setTextColor(37);
+				exit(0);
+			}
+			else if ((casAktualni - casSpusteniHry) == CASKONCE)
+			{
+				setTextColor(33);
+				printf("----------------------------------------------\n");
+				printf("Vyprsel ti cas!\n");
+				printf("----------------------------------------------\n");
+				setTextColor(37);
+				exit(0);
+			}
+			else
+			{
+				setTextColor(33);
+				printf("----------------------------------------------\n");
+				printf("Umrel jsi :(\n");
+				printf("----------------------------------------------\n");
+				setTextColor(37);
+				exit(0);
+			}
+		}
+		else if (menuActive == 2) {
+			system("cls");
+			setTextColor(37);
+			printf("----------------------------------------------\n");
+			printf("PRAVIDLA\n");
+			printf("----------------------------------------------\n");
+			printf("1.\n");
+			printf("2.\n");
+			printf("3.\n");
+			printf("\n\n");
+			printf("Pro prejiti zpet do hlavniho menu stiskni klavesu");
+			printf(" ");
+			setTextColor(36);
+			printf("B");
+			setTextColor(37);
+			printf("!\n");
+
+			if (menuCheck()) {
+				continue;
+			}
+		}
+		else if (menuActive == 3) {
+			system("cls");
+			setTextColor(37);
+			printf("----------------------------------------------\n");
+			printf("NASTAVENI\n");
+			printf("----------------------------------------------\n");
+			printf("Dostupne mapy: A, B\n");
+			printf("Vyber mapu: ");
+			printf("\n\n");
+			printf("Pro prejiti zpet do hlavniho menu stiskni klavesu");
+			printf(" ");
+			setTextColor(36);
+			printf("B");
+			setTextColor(37);
+			printf("!\n");
+
+			if (menuCheck()) {
+				continue;
+			}
+		}
+
+	} while (znak != 27);
 
 	return 0;
 }
