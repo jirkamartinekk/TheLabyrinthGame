@@ -1,4 +1,4 @@
-#define _CRT_SECURE_NO_WARNINGS 1
+﻿#define _CRT_SECURE_NO_WARNINGS 1
 #include <iostream>
 #include <windows.h>
 #include <string.h>
@@ -8,13 +8,16 @@
 #include <time.h>
 
 #define MAX 8
-#define CASKONCE 25
 
 int poziceX = 0;
 int poziceY = 0;
 int zivoty = 3;
 int menuActive;
+int positionOfEndX;
+int positionOfEndY;
 int mapSettings = 1;
+int settingsRadek = 1;
+int CASKONCE = 25;
 char znak = 'm';
 char hraciPole[MAX][MAX];
 unsigned long cas, casAktualni, casSpusteniHry;
@@ -46,14 +49,34 @@ void vypisSachovnici()
 
     system("cls");
 
-    printf("Pouzij klavesy W,A,S,D pro pohyb:");
+    printf("Pouzij klavesy ");
+    setTextColor(36);
+    printf("W");
+    setTextColor(37);
+    printf(", ");
+    setTextColor(36);
+    printf("A");
+    setTextColor(37);
+    printf(", ");
+    setTextColor(36);
+    printf("S");
+    setTextColor(37);
+    printf(", ");
+    setTextColor(36);
+    printf("D");
+    setTextColor(37);
+    printf(" pro pohyb:");
     printf("\n");
-    printf("Stiskni ESC pro ukonceni:");
+    printf("Stiskni ");
+    setTextColor(36);
+    printf("ESC");
+    setTextColor(37);
+    printf(" pro ukonceni:");
     printf("\n");
     cas = time(0);
     printf("----------------------------------------------");
     printf("\nZivoty: %d", zivoty);
-    printf("                             ");
+    printf("                          ");
     printf("Cas: %u", CASKONCE - (casAktualni - casSpusteniHry));
     printf("\n");
     printf("----------------------------------------------\n");
@@ -65,7 +88,7 @@ void vypisSachovnici()
     printf(" | ");
     printf("X: %d", poziceX);
     printf(" | ");
-    if (poziceY == 3 && poziceX == 5 || poziceY == 6 && poziceX == 1)
+    if (poziceY == 3 && poziceX == 5 || poziceY == 6 && poziceX == 1 || poziceY == 7 && poziceX == 0 || poziceY == 1 && poziceX == 7)
     {
         printf("TP in use");
     }
@@ -77,45 +100,85 @@ void vypisSachovnici()
     {
         for (sloupec = 0; sloupec < MAX; sloupec++)
         {
-            setTextColor(37); // bílá
+            setTextColor(37);
             printf("+-");
         }
         setTextColor(37);
         printf("+\n");
         for (sloupec = 0; sloupec < MAX; sloupec++)
-            if (sloupec == poziceX && radek == poziceY)
+            if (mapSettings == 1)
             {
-                setTextColor(37);
-                printf("|");
-                setTextColor(31); // červená
-                printf("*");
+                if (sloupec == poziceX && radek == poziceY)
+                {
+                    setTextColor(37);
+                    printf("|");
+                    setTextColor(31);
+                    printf("*");
+                }
+                else if (sloupec == MAX - 1 && radek == MAX - 1)
+                {
+                    setTextColor(37);
+                    printf("|");
+                    setTextColor(34);
+                    printf("E");
+                }
+                else if (sloupec == MAX - 3 && radek == MAX - 5)
+                {
+                    setTextColor(37);
+                    printf("|");
+                    setTextColor(32);
+                    printf("T");
+                }
+                else if (sloupec == MAX - 7 && radek == MAX - 2)
+                {
+                    setTextColor(37);
+                    printf("|");
+                    setTextColor(32);
+                    printf("T");
+                }
+                else
+                {
+                    setTextColor(37);
+                    printf("|%c", hraciPole[radek][sloupec]);
+                }
             }
-            else if (sloupec == MAX - 1 && radek == MAX - 1)
+            else if (mapSettings == 2)
             {
-                setTextColor(37);
-                printf("|");
-                setTextColor(34); // modrá
-                printf("E");
+                if (sloupec == poziceX && radek == poziceY)
+                {
+                    setTextColor(37);
+                    printf("|");
+                    setTextColor(31);
+                    printf("*");
+                }
+                else if (sloupec == 3 && radek == 4)
+                {
+                    setTextColor(37);
+                    printf("|");
+                    setTextColor(34);
+                    printf("E");
+                }
+                else if (sloupec == 7 && radek == 1)
+                {
+                    setTextColor(37);
+                    printf("|");
+                    setTextColor(32);
+                    printf("T");
+                }
+                else if (sloupec == 0 && radek == 7)
+                {
+                    setTextColor(37);
+                    printf("|");
+                    setTextColor(32);
+                    printf("T");
+                }
+                else
+                {
+                    setTextColor(37);
+                    printf("|%c", hraciPole[radek][sloupec]);
+                }
             }
-            else if (sloupec == MAX - 3 && radek == MAX - 5)
-            {
-                setTextColor(37);
-                printf("|");
-                setTextColor(32); // zelená
-                printf("T");
-            }
-            else if (sloupec == MAX - 7 && radek == MAX - 2)
-            {
-                setTextColor(37);
-                printf("|");
-                setTextColor(32);
-                printf("T");
-            }
-            else
-            {
-                setTextColor(37);
-                printf("|%c", hraciPole[radek][sloupec]);
-            }
+
         setTextColor(37);
         printf("|\n");
     }
@@ -133,15 +196,31 @@ void vypisSachovnici()
 
 void teleport()
 {
-    if (poziceY == 3 && poziceX == 5)
+    if (mapSettings == 1)
     {
-        poziceY = 6;
-        poziceX = 1;
+        if (poziceY == 3 && poziceX == 5)
+        {
+            poziceY = 6;
+            poziceX = 1;
+        }
+        else if (poziceY == 6 && poziceX == 1)
+        {
+            poziceY = 3;
+            poziceX = 5;
+        }
     }
-    else if (poziceY == 6 && poziceX == 1)
+    else if (mapSettings == 2)
     {
-        poziceY = 3;
-        poziceX = 5;
+        if (poziceY == 1 && poziceX == 7)
+        {
+            poziceY = 7;
+            poziceX = 0;
+        }
+        else if (poziceY == 7 && poziceX == 0)
+        {
+            poziceY = 1;
+            poziceX = 7;
+        }
     }
 
     return;
@@ -182,8 +261,9 @@ int nactiHraciPoleZeSouboru()
 
     int sloupec, radek, znak;
 
-    FILE* soubor;
-    if (mapSettings == 1) {
+    FILE *soubor;
+    if (mapSettings == 1)
+    {
         if (soubor = fopen("maps\\01.txt", "r"))
         {
 
@@ -204,9 +284,15 @@ int nactiHraciPoleZeSouboru()
             return 1;
         }
         else
+        {
+            printf("\n");
+            setTextColor(41);
             printf("Nastala chyba pri nacitani souboru!\n");
+            setTextColor(40);
+        }
     }
-    else {
+    else
+    {
         if (soubor = fopen("maps\\02.txt", "r"))
         {
 
@@ -227,7 +313,12 @@ int nactiHraciPoleZeSouboru()
             return 1;
         }
         else
+        {
+            printf("\n");
+            setTextColor(41);
             printf("Nastala chyba pri nacitani souboru!\n");
+            setTextColor(40);
+        }
     }
 
     return 0;
@@ -239,14 +330,16 @@ int main()
     {
         system("cls");
 
-        setTextColor(37);
+        setTextColor(35);
         std::cout << " _______ _             _____            _                      _             _____     \n"
-            "|__   __| |           / ____|          | |                    (_)           / ____|    \n"
-            "   | |  | |__   ___  | (___   __ _  ___| |__   _____   ___ __  _  ___ ___  | |  __  __ _ _ __ ___   ___ \n"
-            "   | |  | '_ \\ / _ \\  \\___ \\ / _` |/ __| '_ \\ / _ \\ \\ / / '_ \\| |/ __/ _ \\ | | |_ |/ _` | '_ ` _ \\ / _ \\\n"
-            "   | |  | | | |  __/  ____) | (_| | (__| | | | (_) \\ V /| | | | | (_|  __/ | |__| | (_| | | | | | |  __/\n"
-            "   |_|  |_| |_|\\___| |_____/ \\__,_|\\___|_| |_|\\___/ \\_/ |_| |_|_|\\___\\___|  \\_____|\\__,_|_| |_| |_|\\___|\n";
-        printf("version: 4.2.0\n");
+                     "|__   __| |           / ____|          | |                    (_)           / ____|    \n"
+                     "   | |  | |__   ___  | (___   __ _  ___| |__   _____   ___ __  _  ___ ___  | |  __  __ _ _ __ ___   ___ \n"
+                     "   | |  | '_ \\ / _ \\  \\___ \\ / _` |/ __| '_ \\ / _ \\ \\ / / '_ \\| |/ __/ _ \\ | | |_ |/ _` | '_ ` _ \\ / _ \\\n"
+                     "   | |  | | | |  __/  ____) | (_| | (__| | | | (_) \\ V /| | | | | (_|  __/ | |__| | (_| | | | | | |  __/\n"
+                     "   |_|  |_| |_|\\___| |_____/ \\__,_|\\___|_| |_|\\___/ \\_/ |_| |_|_|\\___\\___|  \\_____|\\__,_|_| |_| |_|\\___|\n";
+        setTextColor(33);
+        printf("version: 4.3.0\n");
+        setTextColor(37);
         printf("\n\n");
         printf("Pro spusteni hry stiskni klavesu");
         printf(" ");
@@ -279,7 +372,9 @@ int main()
         {
             if (!nactiHraciPoleZeSouboru())
             {
+                setTextColor(41);
                 printf("Soubor se nepodarilo otevrit!\n");
+                setTextColor(40);
                 return 0;
             }
 
@@ -336,9 +431,20 @@ int main()
                     vypisSachovnici();
                 }
 
-            } while (znak != 27 && !(poziceX == (MAX - 1) && (poziceY == MAX - 1)) && !zivoty == 0 && (CASKONCE - (casAktualni - casSpusteniHry)));
+                if (mapSettings == 1)
+                {
+                    positionOfEndX = 7;
+                    positionOfEndY = 7;
+                }
+                else if (mapSettings == 2)
+                {
+                    positionOfEndX = 3;
+                    positionOfEndY = 4;
+                }
 
-            if (poziceX == (MAX - 1) && (poziceY == MAX - 1))
+            } while (znak != 27 && !((poziceX == positionOfEndX) && (poziceY == positionOfEndY)) && !zivoty == 0 && (CASKONCE - (casAktualni - casSpusteniHry)));
+
+            if (poziceX == positionOfEndX && poziceY == positionOfEndY)
             {
                 setTextColor(33);
                 printf("----------------------------------------------\n");
@@ -402,7 +508,8 @@ int main()
         else if (menuActive == 3)
         {
             system("cls");
-            do {
+            do
+            {
                 system("cls");
 
                 setTextColor(37);
@@ -410,22 +517,75 @@ int main()
                 printf("NASTAVENI\n");
                 printf("----------------------------------------------\n");
                 printf("Vyber mapu: ");
+                if (settingsRadek == 1)
+                {
+                    setTextColor(33);
+                }
                 printf("<%d>", mapSettings);
+                setTextColor(37);
+                printf("\n");
+                printf("Cas do konce hry: ");
+                if (settingsRadek == 2)
+                {
+                    setTextColor(33);
+                }
+                printf("<%d>", CASKONCE);
+                setTextColor(37);
                 printf("\n");
                 printf("\n\n");
-                printf("Pro prejiti zpet do hlavniho menu stiskni 2x klavesu");
+                printf("Pro prejiti zpet do hlavniho menu stiskni");
                 printf(" ");
                 setTextColor(36);
+                printf("2x");
+                setTextColor(37);
+                printf(" ");
+                printf("klavesu");
+                setTextColor(36);
+                printf(" ");
                 printf("B");
                 setTextColor(37);
                 printf("!\n");
                 znak = _getch();
-                if (znak == 77) {
-                    mapSettings = 2;
+
+                if (znak == 80)
+                {
+                    settingsRadek = 2;
                 }
-                else if (znak == 75) {
-                    mapSettings = 1;
+                else if (znak == 72)
+                {
+                    settingsRadek = 1;
                 }
+
+                if (settingsRadek == 1)
+                {
+                    if (znak == 77)
+                    {
+                        mapSettings = 2;
+                    }
+                    else if (znak == 75)
+                    {
+                        mapSettings = 1;
+                    }
+                }
+                else if (settingsRadek == 2)
+                {
+                    if (CASKONCE >= 6)
+                    {
+                        if (znak == 75)
+                        {
+                            CASKONCE--;
+                        }
+                    }
+
+                    if (CASKONCE <= 64)
+                    {
+                        if (znak == 77)
+                        {
+                            CASKONCE++;
+                        }
+                    }
+                }
+
             } while (znak != 'b' && znak != 'B');
 
             if (menuCheck())
