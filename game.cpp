@@ -1,4 +1,4 @@
-﻿#define _CRT_SECURE_NO_WARNINGS 1
+#define _CRT_SECURE_NO_WARNINGS 1
 #include <iostream>
 #include <windows.h>
 #include <string.h>
@@ -6,6 +6,8 @@
 #include <cstdlib>
 #include <conio.h>
 #include <time.h>
+#include "MMSystem.h"
+using namespace std;
 
 #define MAX 8
 
@@ -261,7 +263,7 @@ int nactiHraciPoleZeSouboru()
 
     int sloupec, radek, znak;
 
-    FILE *soubor;
+    FILE* soubor;
     if (mapSettings == 1)
     {
         if (soubor = fopen("maps\\01.txt", "r"))
@@ -332,13 +334,13 @@ int main()
 
         setTextColor(35);
         std::cout << " _______ _             _____            _                      _             _____     \n"
-                     "|__   __| |           / ____|          | |                    (_)           / ____|    \n"
-                     "   | |  | |__   ___  | (___   __ _  ___| |__   _____   ___ __  _  ___ ___  | |  __  __ _ _ __ ___   ___ \n"
-                     "   | |  | '_ \\ / _ \\  \\___ \\ / _` |/ __| '_ \\ / _ \\ \\ / / '_ \\| |/ __/ _ \\ | | |_ |/ _` | '_ ` _ \\ / _ \\\n"
-                     "   | |  | | | |  __/  ____) | (_| | (__| | | | (_) \\ V /| | | | | (_|  __/ | |__| | (_| | | | | | |  __/\n"
-                     "   |_|  |_| |_|\\___| |_____/ \\__,_|\\___|_| |_|\\___/ \\_/ |_| |_|_|\\___\\___|  \\_____|\\__,_|_| |_| |_|\\___|\n";
+            "|__   __| |           / ____|          | |                    (_)           / ____|    \n"
+            "   | |  | |__   ___  | (___   __ _  ___| |__   _____   ___ __  _  ___ ___  | |  __  __ _ _ __ ___   ___ \n"
+            "   | |  | '_ \\ / _ \\  \\___ \\ / _` |/ __| '_ \\ / _ \\ \\ / / '_ \\| |/ __/ _ \\ | | |_ |/ _` | '_ ` _ \\ / _ \\\n"
+            "   | |  | | | |  __/  ____) | (_| | (__| | | | (_) \\ V /| | | | | (_|  __/ | |__| | (_| | | | | | |  __/\n"
+            "   |_|  |_| |_|\\___| |_____/ \\__,_|\\___|_| |_|\\___/ \\_/ |_| |_|_|\\___\\___|  \\_____|\\__,_|_| |_| |_|\\___|\n";
         setTextColor(33);
-        printf("version: 4.3.0\n");
+        printf("version: 4.4.0\n");
         setTextColor(37);
         printf("\n\n");
         printf("Pro spusteni hry stiskni klavesu");
@@ -365,11 +367,11 @@ int main()
         printf("ESC");
         setTextColor(37);
         printf("!\n");
-
         menuCheck();
 
         if (menuActive == 1)
         {
+
             if (!nactiHraciPoleZeSouboru())
             {
                 setTextColor(41);
@@ -446,12 +448,15 @@ int main()
 
             if (poziceX == positionOfEndX && poziceY == positionOfEndY)
             {
+
                 setTextColor(33);
                 printf("----------------------------------------------\n");
                 printf("Gratuluji ti, kavalire! Mas u me svacinu!\n");
                 printf("----------------------------------------------\n");
                 setTextColor(37);
+                PlaySound(TEXT("sounds\\win.wav"), NULL, SND_SYNC);
                 exit(0);
+
             }
             else if (znak == 27)
             {
@@ -460,6 +465,7 @@ int main()
                 printf("Ukoncil jsi hru, srabe!\n");
                 printf("----------------------------------------------\n");
                 setTextColor(37);
+                PlaySound(TEXT("sounds\\lose.wav"), NULL, SND_SYNC);
                 exit(0);
             }
             else if ((casAktualni - casSpusteniHry) == CASKONCE)
@@ -469,6 +475,7 @@ int main()
                 printf("Vyprsel ti cas!\n");
                 printf("----------------------------------------------\n");
                 setTextColor(37);
+                PlaySound(TEXT("sounds\\lose.wav"), NULL, SND_SYNC);
                 exit(0);
             }
             else
@@ -478,6 +485,7 @@ int main()
                 printf("Umrel jsi :(\n");
                 printf("----------------------------------------------\n");
                 setTextColor(37);
+                PlaySound(TEXT("sounds\\lose.wav"), NULL, SND_SYNC);
                 exit(0);
             }
         }
